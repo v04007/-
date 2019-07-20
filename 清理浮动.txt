@@ -1,5 +1,0 @@
-.clearfiexd::after{
-        display: table;
-        content: " ";
-        clear: both;
-    }
