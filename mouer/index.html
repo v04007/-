@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>打地鼠</title>
+    <style>
+     
+    #scene{
+        width: 750px;
+        height: 550px;
+        background: url("bg.png");
+        position: relative;
+        user-select: none;
+        cursor: none;
+    }
+    #hammer{
+        /* border: 1px solid black; */
+        margin-top: -40px;
+        margin-left: -40px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: none;
+        user-select: none;
+        z-index: 999;
+    }
+    div[id^="hollow"]{
+        /* border: 1px solid black; */
+        width: 102px;
+        height: 103px;
+        position: absolute;
+        overflow: hidden;
+
+    }
+    #hollow1 {
+        top: 160px;
+        left: 140px;
+    }
+    #hollow2 {
+        top: 160px;
+        left: 330px;
+    }
+    #hollow3 {
+        top: 160px;
+        left: 530px;
+    }
+    #hollow4 {
+        top: 250px;
+        left: 120px;
+    }
+    #hollow5 {
+        top: 250px;
+        left: 335px;
+    }
+    #hollow6 {
+        top: 250px;
+        left: 530px;
+    }
+    #hollow7 {
+        top: 340px;
+        left: 110px;
+    }
+    #hollow8 {
+        top: 350px;
+        left: 340px;
+    }
+    #hollow9 {
+        top: 350px;
+        left: 550px;
+    }
+    div[id^="hollow"] img{
+        position: absolute;
+        top: 102px;
+        left: 0px;
+        z-index: 2;
+    }
+    .num{
+            position: absolute;
+            left: 276px;
+            top: 194px;
+            z-index: 1;
+        }
+        .tm{
+            position: absolute;
+            left: 528px;
+            top: 194px;
+            z-index: 1;
+        }
+    </style>
+    
+</head>
+<body>
+   
+    <div id="scene">
+            <span class="num">0</span>
+            <span class="tm">60</span>
+        <img src="hammer1.png" id="hammer" alt="">
+
+        <div id="hollow1"><img src="mouse1.png" alt=""></div>
+        <div id="hollow2"><img src="mouse1.png" alt=""></div>
+        <div id="hollow3"><img src="mouse1.png" alt=""></div>
+        <div id="hollow4"><img src="mouse1.png" alt=""></div>
+        <div id="hollow5"><img src="mouse1.png" alt=""></div>
+        <div id="hollow6"><img src="mouse1.png" alt=""></div>
+        <div id="hollow7"><img src="mouse1.png" alt=""></div>
+        <div id="hollow8"><img src="mouse1.png" alt=""></div>
+        <div id="hollow9"><img src="mouse1.png" alt=""></div>
+    </div>
+    
+    <script>
+        var num = document.getElementsByClassName('num')[0];
+        var tm = document.getElementsByClassName('tm')[0];
+        var scene = document.getElementById("scene");
+        var hammer = document.getElementById("hammer");
+        var sum = 0;
+        scene.onmousedown = function(){
+            hammer.src = "hammer2.png";
+        }
+        scene.onmouseup = function(){
+            hammer.src = "hammer1.png";
+        }
+        scene.onmousemove = function(e){
+            // console.log(e.clientX + " " + e.clientY);
+            var x = e.clientX;
+            var y = e.clientY;
+            hammer.style.top = y + "px";
+            hammer.style.left = x + "px";
+        }
+        scene.onclick = function(e){
+            var x = e.clientX;
+            var y = e.clientY;
+            //碰撞检测  最简单的一种   
+            // 鼠标的位置 x  -》    矩形的x1  x2        x1 < x < x2
+            // 鼠标的位置 y  -》    矩形的y1  y2        y1 < y < y2
+            var x1 = mouseAry[mouseID].offsetLeft + hollowAry[mouseID].offsetLeft;
+            var x2 = x1 + mouseAry[mouseID].offsetWidth;
+
+            var y1 = mouseAry[mouseID].offsetTop + hollowAry[mouseID].offsetTop;
+            var y2 = hollowAry[mouseID].offsetTop + hollowAry[mouseID].offsetHeight;
+            if( x > x1 && x < x2 &&  y > y1 && y < y2){
+                mouseAry[mouseID].src = "mouse2.png";
+                ++sum;
+                num.innerHTML=sum;
+               
+            }
+           
+
+        }
+        var mouseID = 0;
+        var hollowAry = [];
+        var mouseAry = [];
+        for(var i = 0;i< 9; i++){
+            hollowAry[i] = document.getElementById("hollow" + (i + 1) );
+            mouseAry[i] = hollowAry[i].getElementsByTagName("img")[0];
+        }
+        //每两秒，产生一个老鼠
+
+        var mouseLoop = null;
+        var loopTime = 30;
+        var initTop = 102;
+        var EndTop = 0;
+        var nowTop = initTop;
+
+        var waitTime = 0;
+        var waitMaxTime = 1000;
+        var young = setInterval(function(){
+            //每次一个老鼠
+            if( mouseLoop == null){
+                mouseID = parseInt(Math.random()*9);
+                mouseAry[mouseID].src = "mouse1.png";
+                nowTop = initTop;
+                waitTime = 0;
+                mouseLoop = setInterval(mouseShow,loopTime);
+            }
+            
+        },2000);
+
+
+        
+        var mouseLoop = setInterval(mouseShow,loopTime);
+       
+        
+        function mouseShow(){
+            if( nowTop > EndTop){
+                nowTop-= 4;
+            }
+            if( nowTop <  EndTop){
+                nowTop = EndTop;
+            }
+            if( nowTop == EndTop){
+                if( waitTime < waitMaxTime){
+                    waitTime += loopTime;
+                }
+                if( waitTime >= waitMaxTime){
+                    nowTop = initTop;
+                    clearInterval(mouseLoop);
+                    mouseLoop = null;
+                }
+                
+            }
+            mouseAry[mouseID].style.top = nowTop + "px";    //102 -> 0;
+        }
+        var da = 60;
+        var Timer = setInterval(cbs ,1000);
+        function cbs (){
+            if(da >0){
+                da--;
+                tm.innerHTML = da;
+             console.log(da)
+            }else if (da == 0){
+                alert('时间到了小伙子');
+                clearInterval(young);
+                clearInterval(Timer);
+               
+            }
+        }
+    </script>
+</body>
+</html>
