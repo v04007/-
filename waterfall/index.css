@@ -1,0 +1,28 @@
+body,ul,li{
+    padding: 0;
+    margin: 0;
+}
+.clearfiex ::after{
+display: block;
+content: '';
+clear: both;
+}
+.wrapper{
+    text-align: center;
+}
+.list{
+    display: inline-block;
+}
+.list li{
+    list-style: none;
+    float: left;
+}
+.list .item{
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 5px;
+}
+.list img{
+    width: 230px;
+    display: block;
+}
